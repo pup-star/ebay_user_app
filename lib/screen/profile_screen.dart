@@ -1,9 +1,7 @@
-import 'package:buttons_tabbar/buttons_tabbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shopping/delivering_status/delivering_tab.dart';
-import 'package:shopping/delivering_status/preparing_tab.dart';
-import 'package:shopping/delivering_status/recieving_tab.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:shopping/controller/login_controller.dart';
 import 'package:shopping/views/address/address_page.dart';
 import 'package:shopping/views/history/history_page.dart';
 import 'package:shopping/views/login/login_page.dart';
@@ -17,194 +15,13 @@ class Profile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return DefaultTabController(
-    //   length: 3,
-    //   child: Scaffold(
-    //     body: Container(
-    //       //color: Colors.amber,
-    //       child: Padding(
-    //         padding: const EdgeInsets.only(top: 80),
-    //         child: Column(
-    //           children: [
-    //             Row(
-    //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //               children: [
-    //                 Column(
-    //                   children: [
-    //                     GestureDetector(
-    //                       onTap: () {
-    //                         Get.to(() => const UserPage());
-    //                       },
-    //                       child: CircleAvatar(
-    //                         radius: 24,
-    //                         child: Image.asset('assets/profile/profile.avif'),
-    //                       ),
-    //                     ),
-    //                     const Text("Ahmed"),
-    //                   ],
-    //                 ),
-    //                 Column(
-    //                   children: [
-    //                     GestureDetector(
-    //                       onTap: () {
-    //                         Get.to(() => const HistoryPage());
-    //                       },
-    //                       child: CircleAvatar(
-    //                         radius: 24,
-    //                         child: Image.asset('assets/icons/history_icon.png'),
-    //                       ),
-    //                     ),
-    //                     const Text("History")
-    //                   ],
-    //                 ),
-    //                 Column(
-    //                   children: [
-    //                     GestureDetector(
-    //                       onTap: () {
-    //                         Get.to(() => const SettingPage());
-    //                       },
-    //                       child: CircleAvatar(
-    //                         radius: 24,
-    //                         child: Image.asset('assets/icons/setting_icon.png'),
-    //                       ),
-    //                     ),
-    //                     const Text("Setting")
-    //                   ],
-    //                 ),
-    //               ],
-    //             ),
-    //             const SizedBox(height: 20),
-    //             Row(
-    //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    //               children: [
-    //                 GestureDetector(
-    //                   onTap: () {
-    //                     Get.to(() => const AddressPage());
-    //                   },
-    //                   child: Column(
-    //                     children: [
-    //                       CircleAvatar(
-    //                         radius: 24,
-    //                         child: Image.asset('assets/icons/map_icon.png'),
-    //                       ),
-    //                       const Text("Address")
-    //                     ],
-    //                   ),
-    //                 ),
-    //                 Column(
-    //                   children: [
-    //                     GestureDetector(
-    //                       onTap: () {
-    //                         Get.to(() => const PrivacyPage());
-    //                       },
-    //                       child: CircleAvatar(
-    //                         radius: 24,
-    //                         child: Image.asset('assets/icons/policy_icon.png'),
-    //                       ),
-    //                     ),
-    //                     const Text("Privacy")
-    //                   ],
-    //                 ),
-    //                 Column(
-    //                   children: [
-    //                     GestureDetector(
-    //                       onTap: () {
-    //                         Get.to(() => const NotificationPage());
-    //                       },
-    //                       child: CircleAvatar(
-    //                         radius: 24,
-    //                         child: Image.asset('assets/icons/notify_icon.png'),
-    //                       ),
-    //                     ),
-    //                     const Text("Notifications")
-    //                   ],
-    //                 ),
-    //                 Column(
-    //                   children: [
-    //                     GestureDetector(
-    //                       onTap: () {
-    //                         Get.to(() => const LoginPage());
-    //                       },
-    //                       child: CircleAvatar(
-    //                         radius: 24,
-    //                         child: Image.asset('assets/icons/logout_icon.png'),
-    //                       ),
-    //                     ),
-    //                     const Text("LogOut")
-    //                   ],
-    //                 ),
-    //               ],
-    //             ),
-    //             const SizedBox(height: 40),
-    //             const Padding(
-    //               padding: EdgeInsets.only(left: 40),
-    //               child: Row(
-    //                 mainAxisAlignment: MainAxisAlignment.start,
-    //                 children: [
-    //                   Text(
-    //                     "Delivery Status",
-    //                     style: TextStyle(
-    //                       fontWeight: FontWeight.bold,
-    //                       fontSize: 16,
-    //                     ),
-    //                   ),
-    //                 ],
-    //               ),
-    //             ),
-    //             ButtonsTabBar(
-    //               radius: 12,
-    //               backgroundColor: Colors.blue,
-    //               unselectedBackgroundColor: Colors.grey,
-    //               borderColor: Colors.black,
-    //               labelStyle: const TextStyle(
-    //                 color: Colors.white,
-    //                 fontWeight: FontWeight.bold,
-    //               ),
-    //               unselectedLabelStyle: const TextStyle(
-    //                 color: Colors.black,
-    //                 fontWeight: FontWeight.bold,
-    //               ),
-    //               contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-    //               tabs: const [
-    //                 Tab(
-    //                     icon: Icon(Icons.delivery_dining),
-    //                     child: Text("Preparing",
-    //                         style: TextStyle(color: Colors.white))),
-    //                 Tab(
-    //                     icon: Icon(Icons.abc),
-    //                     child: Text("Delivering",
-    //                         style: TextStyle(color: Colors.white))),
-    //                 Tab(
-    //                     icon: Icon(Icons.receipt),
-    //                     child: Text("Recieved",
-    //                         style: TextStyle(color: Colors.white))),
-    //               ],
-    //             ),
-    //             const Expanded(
-    //               child: TabBarView(
-    //                 children: [
-    //                   Padding(
-    //                     padding: EdgeInsets.only(top: 12),
-    //                     child: Preparing(),
-    //                   ),
-    //                   Padding(
-    //                     padding: EdgeInsets.only(top: 10),
-    //                     child: Delivering(),
-    //                   ),
-    //                   Padding(
-    //                     padding: EdgeInsets.only(top: 10),
-    //                     child: Recieved(),
-    //                   ),
-    //                 ],
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // );
+    final controller = Get.put(LoginController());
+    final box = GetStorage();
 
+    String? token = box.read('token');
+    if (token == null) {
+      return LoginPage();
+    }
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -311,7 +128,8 @@ class Profile extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  Get.offAll(() => LoginPage());
+                  //Get.offAll(() => LoginPage());
+                  controller.logout();
                 },
                 child: ListTile(
                   leading: Icon(Icons.logout_outlined),

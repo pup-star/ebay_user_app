@@ -1,12 +1,17 @@
+import 'dart:convert';
+
 import 'package:buttons_tabbar/buttons_tabbar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:shopping/tab/tab_all.dart';
 import 'package:shopping/tab/tab_clothes.dart';
 import 'package:shopping/tab/tab_hat.dart';
 import 'package:shopping/tab/tab_pants.dart';
 import 'package:shopping/tab/tab_shoe.dart';
 import 'package:shopping/views/count/bag_page.dart';
+import 'package:shopping/views/login/login_page.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -16,8 +21,56 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  var status;
+  var sum;
+  final box = GetStorage();
+
+  GetCount() async {
+    // String? accessToken = box.read("token");
+
+    // Map<String, String> headers = {
+    //   'Content-Type': 'application/json',
+    //   'Authorization': 'Bearer $accessToken'
+    // };
+
+    //setLoading = true;
+
+    String userId = box.read("userId");
+    print("user id is ${userId}");
+
+    var url = Uri.parse('http://localhost:8000/api/order/count/${userId}');
+    http.Response response = await http.get(url);
+
+    //print("count token is $accessToken");
+
+    if (response.statusCode == 200) {
+      var results = jsonDecode(response.body);
+
+      setState(() {
+        this.status = results['status'];
+        this.sum = results['count'];
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    GetCount();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final box = GetStorage();
+
+    String? token = box.read('token');
+    if (token == null) {
+      return LoginPage();
+    }
+
+    if (sum == null) {
+      sum = 0;
+    }
     return DefaultTabController(
       length: 5,
       child: Scaffold(
@@ -49,8 +102,8 @@ class _HomeState extends State<Home> {
                 onPressed: () {
                   Get.to(() => const BagPage());
                 },
-                icon: const Badge(
-                  label: Text("0"),
+                icon: Badge(
+                  label: Text("${sum}"),
                   child: Icon(
                     Icons.shopping_bag,
                     color: Colors.black54,

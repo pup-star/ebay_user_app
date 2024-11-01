@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:shopping/homepage.dart';
+import 'package:shopping/controller/login_controller.dart';
+import 'package:shopping/models/login_model.dart';
 import 'package:shopping/views/login/widget/email_widget.dart';
 import 'package:shopping/views/login/widget/password_widget.dart';
 import 'package:shopping/views/register/resgister_page.dart';
@@ -29,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(LoginController());
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -81,9 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         GestureDetector(
                             onTap: () {
-                              Get.to(
-                                () => const RegistrationPage(),
-                              );
+                              Get.to(() => RegistrationPage());
                             },
                             child: const Text("Register")),
                       ],
@@ -93,14 +93,29 @@ class _LoginPageState extends State<LoginPage> {
                     height: 30,
                   ),
                   ElevatedButton(
+                    // onPressed: () {
+                    //   Get.to(() => const HomePage());
+                    // },
                     onPressed: () {
-                      Get.to(() => const HomePage());
+                      if (_emailController.text.isNotEmpty &&
+                          _passwordController.text.length >= 8) {
+                        LoginModel model = LoginModel(
+                            email: _emailController.text,
+                            password: _passwordController.text);
+
+                        String data = loginModelToJson(model);
+
+                        controller.loginFunction(data);
+                      }
                     },
                     style:
                         ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                     child: const Text(
                       'L o g I n ',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
                     ),
                   ),
                 ],

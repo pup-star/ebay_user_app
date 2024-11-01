@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:shopping/controller/order_controller.dart';
+import 'package:shopping/models/order_request.dart';
+import 'package:shopping/models/shoes_model.dart';
 
 class ShoeDetails extends StatelessWidget {
-  const ShoeDetails({super.key});
+  const ShoeDetails({super.key, required this.shoes});
+
+  final ShoesModel shoes;
 
   @override
   Widget build(BuildContext context) {
+    //print(shoes.id);
+
+    final controller = Get.put(OrdersController());
+    final box = GetStorage();
+
+    String? userId = box.read('userId');
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -21,7 +33,7 @@ class ShoeDetails extends StatelessWidget {
         ),
         title: Container(
           child: Text(
-            "Detail Items",
+            shoes.title,
             style: TextStyle(fontWeight: FontWeight.normal),
           ),
         ),
@@ -36,7 +48,7 @@ class ShoeDetails extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     image: DecorationImage(
-                      image: AssetImage("assets/image/converse.png"),
+                      image: NetworkImage(shoes.imageUrl),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -50,14 +62,14 @@ class ShoeDetails extends StatelessWidget {
                   ),
                   title: Container(
                     child: Text(
-                      "H&M SHOP",
+                      shoes.dealerName,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   subtitle: Text("Open 09:00 - 16:00"),
                   trailing: Container(
                     child: Text(
-                      '99  \$',
+                      '${shoes.price} \$',
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
                     ),
@@ -71,7 +83,7 @@ class ShoeDetails extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 14),
                       child: Container(
                         child: Text(
-                          "Hoodie",
+                          shoes.title,
                           style: TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
@@ -89,7 +101,24 @@ class ShoeDetails extends StatelessWidget {
       bottomNavigationBar: BottomAppBar(
         child: Container(
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              OrderRequest order = OrderRequest(
+                userId: userId.toString(),
+                imageUser: "",
+                nameUser: "",
+                address: "",
+                imageProduct: shoes.imageUrl,
+                nameProduct: shoes.title.toString(),
+                price: shoes.price,
+                type: shoes.type,
+                storeName: shoes.dealerName,
+                dealerImage: "",
+                dealerId: shoes.dealerId,
+                //orderStatus: 'Pending',
+              );
+              String orderData = orderRequestToJson(order);
+              controller.createOrder(orderData, order);
+            },
             child: Text(
               "A D D   T O   C A R T",
               style: TextStyle(color: Colors.white),

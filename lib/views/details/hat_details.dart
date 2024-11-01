@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:shopping/controller/order_controller.dart';
+import 'package:shopping/models/hats_model.dart';
+import 'package:shopping/models/order_request.dart';
 
 class HatDetails extends StatelessWidget {
-  const HatDetails({super.key});
+  const HatDetails({super.key, required this.hats});
+
+  final HatsModel hats;
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(OrdersController());
+    final box = GetStorage();
+
+    String? userId = box.read('userId');
+    //print(hats.id);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -21,7 +32,7 @@ class HatDetails extends StatelessWidget {
         ),
         title: Container(
           child: Text(
-            "Detail Items",
+            hats.title,
             style: TextStyle(fontWeight: FontWeight.normal),
           ),
         ),
@@ -36,7 +47,7 @@ class HatDetails extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     image: DecorationImage(
-                      image: AssetImage("assets/image/addidas_hat.png"),
+                      image: NetworkImage(hats.imageUrl),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -50,14 +61,14 @@ class HatDetails extends StatelessWidget {
                   ),
                   title: Container(
                     child: Text(
-                      "H&M SHOP",
+                      hats.dealerName,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   subtitle: Text("Open 09:00 - 16:00"),
                   trailing: Container(
                     child: Text(
-                      '99  \$',
+                      '${hats.price}  \$',
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
                     ),
@@ -71,7 +82,7 @@ class HatDetails extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 14),
                       child: Container(
                         child: Text(
-                          "Hoodie",
+                          hats.title,
                           style: TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
@@ -89,7 +100,25 @@ class HatDetails extends StatelessWidget {
       bottomNavigationBar: BottomAppBar(
         child: Container(
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              //print(userId);
+              OrderRequest order = OrderRequest(
+                userId: userId.toString(),
+                imageUser: "",
+                nameUser: "",
+                address: "",
+                imageProduct: hats.imageUrl,
+                nameProduct: hats.title.toString(),
+                price: hats.price,
+                type: hats.type,
+                storeName: hats.dealerName,
+                dealerImage: "",
+                dealerId: hats.dealerId,
+                //orderStatus: 'Pending',
+              );
+              String orderData = orderRequestToJson(order);
+              controller.createOrder(orderData, order);
+            },
             child: Text(
               "A D D   T O   C A R T",
               style: TextStyle(color: Colors.white),

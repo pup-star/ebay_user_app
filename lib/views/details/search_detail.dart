@@ -3,13 +3,14 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:shopping/controller/order_controller.dart';
-import 'package:shopping/models/clothes_model.dart';
+import 'package:shopping/models/all_model.dart';
 import 'package:shopping/models/order_request.dart';
+import 'package:shopping/models/search_model.dart';
 
-class DetailPage extends StatelessWidget {
-  const DetailPage({super.key, required this.clothes});
+class SearchDetail extends StatelessWidget {
+  const SearchDetail({super.key, required this.all});
 
-  final ClothesModel clothes;
+  final SearchModel all;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class DetailPage extends StatelessWidget {
     final box = GetStorage();
 
     String? userId = box.read('userId');
-    //print(clothes.title);
+    // print("user id is ${userId}");
 
     return Scaffold(
       appBar: AppBar(
@@ -33,7 +34,7 @@ class DetailPage extends StatelessWidget {
         ),
         title: Container(
           child: Text(
-            clothes.title,
+            all.title.toString(),
             style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
           ),
         ),
@@ -48,7 +49,7 @@ class DetailPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     image: DecorationImage(
-                      image: NetworkImage(clothes.imageUrl),
+                      image: NetworkImage(all.imageUrl),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -62,14 +63,14 @@ class DetailPage extends StatelessWidget {
                   ),
                   title: Container(
                     child: Text(
-                      clothes.dealerName,
+                      all.dealerName,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   subtitle: Text("Open 09:00 - 16:00"),
                   trailing: Container(
                     child: Text(
-                      '${clothes.price}  \$',
+                      '${all.price}  \$',
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
                     ),
@@ -83,7 +84,7 @@ class DetailPage extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 14),
                       child: Container(
                         child: Text(
-                          clothes.title,
+                          all.title.toString(),
                           style: TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
@@ -102,18 +103,19 @@ class DetailPage extends StatelessWidget {
         child: Container(
           child: ElevatedButton(
             onPressed: () {
+              print(userId);
               OrderRequest order = OrderRequest(
                 userId: userId.toString(),
                 imageUser: "",
                 nameUser: "",
                 address: "",
-                imageProduct: clothes.imageUrl,
-                nameProduct: clothes.title.toString(),
-                price: clothes.price,
-                type: clothes.type,
-                storeName: clothes.dealerName,
+                imageProduct: all.imageUrl,
+                nameProduct: all.title.toString(),
+                price: all.price,
+                type: all.type,
+                storeName: all.dealerName,
                 dealerImage: "",
-                dealerId: clothes.dealerId,
+                dealerId: all.dealerId,
                 //orderStatus: 'Pending',
               );
               String orderData = orderRequestToJson(order);

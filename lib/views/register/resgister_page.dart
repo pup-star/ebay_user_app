@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shopping/controller/register_controller.dart';
+import 'package:shopping/models/registration_model.dart';
 import 'package:shopping/views/login/login_page.dart';
 import 'package:shopping/views/login/widget/email_widget.dart';
 import 'package:shopping/views/login/widget/password_widget.dart';
@@ -13,27 +15,27 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
-  late final TextEditingController _emailController = TextEditingController();
-  late final TextEditingController _passwordController =
-      TextEditingController();
-  late final TextEditingController _userController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _userController = TextEditingController();
 
-  late final TextEditingController _phoneController = TextEditingController();
+  //late final TextEditingController _phoneController = TextEditingController();
 
-  final FocusNode _passwordFocusNode = FocusNode();
+  //final FocusNode _passwordFocusNode = FocusNode();
 
   @override
   void dispose() {
-    _passwordFocusNode.dispose();
+    //_passwordFocusNode.dispose();
     _passwordController.dispose();
     _emailController.dispose();
     _userController.dispose();
-    _phoneController.dispose();
+    //_phoneController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(RegistrationController());
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -71,18 +73,18 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     ),
                     controller: _userController,
                   ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  EmailTextFeild(
-                    hintText: "Phone",
-                    prefixIcon: const Icon(
-                      Icons.person_2_outlined,
-                      size: 22,
-                      color: Colors.grey,
-                    ),
-                    controller: _phoneController,
-                  ),
+                  // const SizedBox(
+                  //   height: 25,
+                  // ),
+                  // EmailTextFeild(
+                  //   hintText: "Phone",
+                  //   prefixIcon: const Icon(
+                  //     Icons.person_2_outlined,
+                  //     size: 22,
+                  //     color: Colors.grey,
+                  //   ),
+                  //   controller: _phoneController,
+                  // ),
                   const SizedBox(
                     height: 25,
                   ),
@@ -122,8 +124,26 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     height: 25,
                   ),
                   ElevatedButton(
+                    // onPressed: () {
+                    //   Get.to(() => const LoginPage());
+
+                    // },
                     onPressed: () {
-                      Get.to(() => const LoginPage());
+                      if (_emailController.text.isNotEmpty &&
+                          _userController.text.isNotEmpty &&
+                          //_phoneController.text.isNotEmpty &&
+                          _passwordController.text.length >= 8) {
+                        RegistrationModel model = RegistrationModel(
+                          username: _userController.text,
+                          // phone: _phoneController.text,
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                        );
+
+                        String data = registrationModelToJson(model);
+
+                        controller.registrationFunction(data);
+                      }
                     },
                     style:
                         ElevatedButton.styleFrom(backgroundColor: Colors.blue),

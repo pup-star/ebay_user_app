@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:shopping/controller/order_controller.dart';
+import 'package:shopping/models/order_request.dart';
+import 'package:shopping/models/pants_model.dart';
 
 class PantDetails extends StatelessWidget {
-  const PantDetails({super.key});
+  const PantDetails({super.key, required this.pants});
+
+  final PantsModel pants;
 
   @override
   Widget build(BuildContext context) {
+    //print(pants.id);
+
+    final controller = Get.put(OrdersController());
+    final box = GetStorage();
+
+    String? userId = box.read('userId');
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -21,7 +33,7 @@ class PantDetails extends StatelessWidget {
         ),
         title: Container(
           child: Text(
-            "Detail Items",
+            pants.title,
             style: TextStyle(fontWeight: FontWeight.normal),
           ),
         ),
@@ -36,7 +48,7 @@ class PantDetails extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     image: DecorationImage(
-                      image: AssetImage("assets/image/pants.png"),
+                      image: NetworkImage(pants.imageUrl),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -52,14 +64,14 @@ class PantDetails extends StatelessWidget {
                   ),
                   title: Container(
                     child: Text(
-                      "H&M SHOP",
+                      pants.dealerName,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                   subtitle: Text("Open 09:00 - 16:00"),
                   trailing: Container(
                     child: Text(
-                      '99  \$',
+                      '${pants.price}  \$',
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
                     ),
@@ -73,7 +85,7 @@ class PantDetails extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 14),
                       child: Container(
                         child: Text(
-                          "Hoodie",
+                          pants.title,
                           style: TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
@@ -91,7 +103,24 @@ class PantDetails extends StatelessWidget {
       bottomNavigationBar: BottomAppBar(
         child: Container(
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              OrderRequest order = OrderRequest(
+                userId: userId.toString(),
+                imageUser: "",
+                nameUser: "",
+                address: "",
+                imageProduct: pants.imageUrl,
+                nameProduct: pants.title.toString(),
+                price: pants.price,
+                type: pants.type,
+                storeName: pants.dealerName,
+                dealerImage: "",
+                dealerId: pants.dealerId,
+                //orderStatus: 'Pending',
+              );
+              String orderData = orderRequestToJson(order);
+              controller.createOrder(orderData, order);
+            },
             child: Text(
               "A D D   T O   C A R T",
               style: TextStyle(color: Colors.white),

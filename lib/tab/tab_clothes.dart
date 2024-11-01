@@ -1,79 +1,67 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shopping/models/clothes_model.dart';
 import 'package:shopping/views/details/clothes_detail.dart';
+import 'package:http/http.dart' as http;
 
-class TabClothes extends StatelessWidget {
+class TabClothes extends StatefulWidget {
   const TabClothes({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // return SizedBox(
-    //   child: GridView.builder(
-    //     itemCount: 20,
-    //     gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-    //       maxCrossAxisExtent: 200,
-    //       mainAxisSpacing: 15,
-    //       crossAxisSpacing: 15,
-    //     ),
-    //     itemBuilder: (BuildContext context, int index) {
-    //       return GestureDetector(
-    //         onTap: () {
-    //           Get.to(() => const DetailPage());
-    //         },
-    //         child: Card(
-    //           elevation: 0.5,
-    //           child: Column(
-    //             children: [
-    //               SizedBox(
-    //                 height: 145,
-    //                 child: Image.asset(
-    //                   "assets/image/t-shirt.jpg",
-    //                   fit: BoxFit.cover,
-    //                 ),
-    //               ),
-    //               Container(
-    //                 padding: const EdgeInsets.all(16.0),
-    //                 alignment: Alignment.centerLeft,
-    //                 child: const Row(
-    //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    //                   children: [
-    //                     Text(
-    //                       "Levi's ",
-    //                       style: TextStyle(fontWeight: FontWeight.bold),
-    //                     ),
-    //                     Text(
-    //                       " \$ 99",
-    //                       style: TextStyle(
-    //                           fontWeight: FontWeight.normal,
-    //                           fontSize: 14,
-    //                           color: Colors.black54),
-    //                     ),
-    //                   ],
-    //                 ),
-    //               ),
-    //             ],
-    //           ),
-    //         ),
-    //       );
-    //     },
-    //   ),
-    // );
+  State<TabClothes> createState() => _TabClothesState();
+}
 
+class _TabClothesState extends State<TabClothes> {
+  Future<List<ClothesModel>> ListItems = getPostApi();
+  static Future<List<ClothesModel>> getPostApi() async {
+    var url = Uri.parse("http://localhost:8000/api/item/getRandom/clothes");
+    final response = await http.get(url);
+    final List body = jsonDecode(response.body);
+    return body.map((e) => ClothesModel.fromJson(e)).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: FutureBuilder<List<ClothesModel>>(
+          future: ListItems,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasData) {
+              final posts = snapshot.data!;
+              return buildPosts(posts);
+            } else {
+              return const Text("No data available");
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget buildPosts(List<ClothesModel> posts) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const ScrollPhysics(),
-      itemCount: 20,
+      itemCount: posts.length,
       itemBuilder: (BuildContext context, int index) {
+        final post = posts[index];
         return GestureDetector(
           onTap: () {
-            Get.to(() => const DetailPage());
+            Get.to(() => DetailPage(clothes: post));
           },
           child: Card(
             child: Column(
               children: <Widget>[
                 SizedBox(
                   height: 200,
-                  child: Image.asset("assets/image/hoodie.png"),
+                  child: Image.network(post.imageUrl),
                 ),
                 ListTile(
                   leading: CircleAvatar(
@@ -82,13 +70,13 @@ class TabClothes extends StatelessWidget {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  title: const Text(
-                    "Coca Cola",
+                  title: Text(
+                    post.title,
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                  subtitle: const Text("coke"),
-                  trailing: const Text(
-                    "\$ 100",
+                  subtitle: Text(post.dealerName),
+                  trailing: Text(
+                    "\$ ${post.price}",
                     style: TextStyle(fontSize: 16),
                   ),
                 ),
